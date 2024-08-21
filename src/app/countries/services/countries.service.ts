@@ -45,5 +45,23 @@ export class CountriesService {
 
   }
 
+  public getlimitsByCountry = (alphaCode:string): Observable<SmallCountry> => {
+    if (!alphaCode) {
+      return of();
+    }
+    const url : string = `${this.baseURL}/alpha/${alphaCode}?fields=cca3,name,borders`
+
+    return this.http.get<Country>(url)
+    .pipe(
+      map(country => ({
+        name:country.name.common,
+        cca3:country.cca3,
+        borders:country.borders ?? []
+      })),
+      tap(response => console.log({response})
+      )
+    );
+  }
+
 
 }

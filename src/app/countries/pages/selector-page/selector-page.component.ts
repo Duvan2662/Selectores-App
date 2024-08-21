@@ -20,6 +20,7 @@ export class SelectorPageComponent implements OnInit {
   })
 
   public countriesByRegion: SmallCountry[] = [];
+  public limites:string[] = [];
 
   constructor(
     private fb : FormBuilder,
@@ -29,6 +30,7 @@ export class SelectorPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.onRegionChanged();
+    this.onCountryChanged();
   }
 
 
@@ -41,11 +43,24 @@ export class SelectorPageComponent implements OnInit {
     this.myForm.get('region')!.valueChanges
     .pipe(
       tap(() => this.myForm.get('country')!.setValue('')),
+      tap(() => this.limites = []),
+
       switchMap(region => this.countriesServices.getCountriesByRegion(region))
     )
     .subscribe(coountries => {
       // console.log({region});
       this.countriesByRegion = coountries;
+    });
+  }
+  public onCountryChanged = ():void => {
+    this.myForm.get('country')!.valueChanges
+    .pipe(
+      tap(() => this.myForm.get('limites')!.setValue('')),
+      switchMap(alphaCode => this.countriesServices.getlimitsByCountry(alphaCode))
+    )
+    .subscribe(countries => {
+      // console.log({limites: countries.borders});
+      this.limites = countries.borders;
     });
   }
 
