@@ -20,7 +20,7 @@ export class SelectorPageComponent implements OnInit {
   })
 
   public countriesByRegion: SmallCountry[] = [];
-  public limites:string[] = [];
+  public limites:SmallCountry[] = [];
 
   constructor(
     private fb : FormBuilder,
@@ -52,15 +52,19 @@ export class SelectorPageComponent implements OnInit {
       this.countriesByRegion = coountries;
     });
   }
+
+
   public onCountryChanged = ():void => {
     this.myForm.get('country')!.valueChanges
     .pipe(
       tap(() => this.myForm.get('limites')!.setValue('')),
-      switchMap(alphaCode => this.countriesServices.getlimitsByCountry(alphaCode))
+      switchMap(alphaCode => this.countriesServices.getCountryByAlphaCode(alphaCode)),
+      switchMap(country => this.countriesServices.getCountryLimitsByCodes(country.borders)),
+
     )
     .subscribe(countries => {
       // console.log({limites: countries.borders});
-      this.limites = countries.borders;
+      this.limites = countries;
     });
   }
 
